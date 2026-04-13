@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 const OWNER = process.env.NEXT_PUBLIC_GITHUB_OWNER || 'dig0gib'
 const REPO  = process.env.NEXT_PUBLIC_GITHUB_REPO  || 'trade-journal-data'
@@ -10,6 +10,14 @@ const API   = `https://api.github.com/repos/${OWNER}/${REPO}`
 async function fetchStatus() {
   try {
     const res = await fetch(`${RAW}/logs/status.json`, { cache: 'no-store' })
+    if (!res.ok) return null
+    return res.json()
+  } catch { return null }
+}
+
+async function fetchLesson() {
+  try {
+    const res = await fetch(`${RAW}/logs/lesson.json`, { cache: 'no-store' })
     if (!res.ok) return null
     return res.json()
   } catch { return null }
@@ -159,6 +167,9 @@ function TodayTrades({ trades }) {
           <span style={{ color: t.type === 'BUY' ? '#60a5fa' : '#f87171', fontWeight: 700, fontSize: 12, minWidth: 34 }}>
             {t.type === 'BUY' ? '매수' : '매도'}
           </span>
+          <span style={{ color: '#9ca3af', fontSize: 11, minWidth: 60 }}>
+            {t.bucket === 'bucket_b' ? '📚B' : t.bucket === 'day' ? 'ETF' : 'SWING'}
+          </span>
           <span style={{ color: '#e2e8f0', fontSize: 13, flex: 1 }}>{t.name}</span>
           <span style={{ color: '#9ca3af', fontSize: 12 }}>{t.price?.toLocaleString()}원 × {t.qty}주</span>
           {t.type === 'SELL' && (
@@ -180,10 +191,242 @@ function TodayTrades({ trades }) {
   )
 }
 
+// ── 컴포넌트: 캔들차트 (lightweight-charts) ──────────────
+function CandleChart({ chartData, ma20, height = 220 }) {
+  const containerRef = useRef(null)
+  const chartRef     = useRef(null)
+
+  useEffect(() => {
+    if (!containerRef.current || !chartData?.length) return
+
+    // 이전 차트 정리
+    if (chartRef.current) {
+      chartRef.current.remove()
+      chartRef.current = null
+    }
+
+    import('lightweight-charts').then(({ createChart, ColorType }) => {
+      const chart = createChart(containerRef.current, {
+        layout: {
+          background: { type: ColorType.Solid, color: '#1a1a1a' },
+          textColor: '#6b7280',
+        },
+        grid: {
+          vertLines: { color: '#2a2a2a' },
+          horzLines: { color: '#2a2a2a' },
+        },
+        rightPriceScale: { borderColor: '#2a2a2a' },
+        timeScale: { borderColor: '#2a2a2a', timeVisible: true },
+        width:  containerRef.current.clientWidth,
+        height: height,
+      })
+      chartRef.current = chart
+
+      // 캔들 시리즈
+      const candleSeries = chart.addCandlestickSeries({
+        upColor:   '#4ade80',
+        downColor: '#f87171',
+        borderUpColor:   '#4ade80',
+        borderDownColor: '#f87171',
+        wickUpColor:   '#4ade80',
+        wickDownColor: '#f87171',
+      })
+
+      const candles = chartData
+        .filter(b => b.open && b.high && b.low && b.close && b.date)
+        .map(b => ({
+          time:  b.date.slice(0, 4) + '-' + b.date.slice(4, 6) + '-' + b.date.slice(6, 8),
+          open:  b.open,
+          high:  b.high,
+          low:   b.low,
+          close: b.close,
+        }))
+        .sort((a, b) => a.time.localeCompare(b.time))
+
+      candleSeries.setData(candles)
+
+      // MA20 라인
+      if (ma20?.length) {
+        const maSeries = chart.addLineSeries({
+          color:     '#facc15',
+          lineWidth: 1,
+          priceLineVisible: false,
+        })
+        const maData = candles
+          .map((c, i) => ma20[i] != null ? { time: c.time, value: ma20[i] } : null)
+          .filter(Boolean)
+        maSeries.setData(maData)
+      }
+
+      chart.timeScale().fitContent()
+
+      // 리사이즈 대응
+      const ro = new ResizeObserver(() => {
+        if (containerRef.current) {
+          chart.applyOptions({ width: containerRef.current.clientWidth })
+        }
+      })
+      ro.observe(containerRef.current)
+      return () => ro.disconnect()
+    })
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.remove()
+        chartRef.current = null
+      }
+    }
+  }, [chartData, ma20, height])
+
+  return <div ref={containerRef} style={{ width: '100%', height }} />
+}
+
+// ── 컴포넌트: 수업 종목 카드 ─────────────────────────────
+function LessonPickCard({ pick }) {
+  const [open, setOpen] = useState(false)
+  const { name, code, reason, status, buy_condition, chart_data, ma20,
+          momentum_20d, volume_ratio, target } = pick
+
+  return (
+    <div style={{
+      ...styles.card,
+      marginBottom: 16,
+      borderColor: '#3b4a6b',
+      background: '#0f1829',
+    }}>
+      {/* 헤더 */}
+      <div
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+        onClick={() => setOpen(o => !o)}
+      >
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#93c5fd' }}>{name}</div>
+          <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2 }}>{code}</div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: 11, color: '#6b7280' }}>모멘텀 / 거래량</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: momentum_20d >= 0 ? '#4ade80' : '#f87171' }}>
+            {momentum_20d >= 0 ? '+' : ''}{momentum_20d?.toFixed(1)}% / {volume_ratio?.toFixed(1)}x
+          </div>
+        </div>
+      </div>
+
+      {/* 요약 뱃지 */}
+      <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+        <span style={styles.infoBadge('blue')}>{status}</span>
+        <span style={styles.infoBadge('gray')}>{reason}</span>
+      </div>
+
+      {/* 매수 조건 */}
+      <div style={{ marginTop: 10, fontSize: 12, color: '#facc15' }}>
+        💡 {buy_condition}
+      </div>
+      {target > 0 && (
+        <div style={{ fontSize: 11, color: '#4b5563', marginTop: 4 }}>
+          변동성 돌파 목표가: {target.toLocaleString()}원
+        </div>
+      )}
+
+      {/* 차트 토글 */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          marginTop: 12,
+          padding: '4px 12px',
+          fontSize: 12,
+          background: 'transparent',
+          border: '1px solid #2a3a5a',
+          borderRadius: 4,
+          color: '#60a5fa',
+          cursor: 'pointer',
+        }}
+      >
+        {open ? '차트 닫기 ▲' : '일봉 차트 보기 ▼'}
+      </button>
+
+      {open && (
+        <div style={{ marginTop: 12 }}>
+          <div style={{ fontSize: 11, color: '#4b5563', marginBottom: 6 }}>
+            노란선 = MA20 / 초록=양봉 / 빨강=음봉
+          </div>
+          <CandleChart chartData={chart_data} ma20={ma20} height={220} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── 컴포넌트: 수업 탭 전체 ───────────────────────────────
+function LessonTab({ lesson }) {
+  if (!lesson) return (
+    <div style={{ padding: '40px 24px', color: '#4b5563', fontSize: 14, textAlign: 'center' }}>
+      <div style={{ fontSize: 32, marginBottom: 12 }}>📚</div>
+      <div>아직 오늘의 수업이 없어요.</div>
+      <div style={{ fontSize: 12, marginTop: 8, color: '#374151' }}>
+        엔진이 오전 9시에 자동 생성합니다.
+      </div>
+    </div>
+  )
+
+  return (
+    <div style={{ padding: '20px 24px', maxWidth: 960, margin: '0 auto' }}>
+
+      {/* 날짜 + 오늘의 개념 */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontSize: 12, color: '#4b5563', marginBottom: 4 }}>{lesson.date}</div>
+        <div style={styles.sectionTitle}>오늘의 개념 — {lesson.lesson_title}</div>
+        <div style={{
+          background: '#111827',
+          border: '1px solid #1e3a5f',
+          borderRadius: 8,
+          padding: '14px 18px',
+          fontSize: 13,
+          lineHeight: 2,
+          color: '#9ca3af',
+          whiteSpace: 'pre-wrap',
+        }}>
+          {lesson.lesson}
+        </div>
+      </div>
+
+      {/* 추천 종목 */}
+      <div>
+        <div style={styles.sectionTitle}>
+          오늘의 추천 종목 ({lesson.picks?.length || 0}개) — 버킷B 자동 편입
+        </div>
+        <div style={{ fontSize: 12, color: '#374151', marginBottom: 16 }}>
+          ※ 소액(포지션 10%) 실전 학습용. VIX 게이트 없이 공격적으로 운영됩니다.
+        </div>
+        {lesson.picks?.map(pick => (
+          <LessonPickCard key={pick.code} pick={pick} />
+        ))}
+      </div>
+
+      {/* 일지 텍스트 */}
+      {lesson.journal_text && (
+        <div style={{ marginTop: 24 }}>
+          <div style={styles.sectionTitle}>선생님의 한마디</div>
+          <pre style={{
+            ...styles.pre,
+            background: '#0f1f0f',
+            border: '1px solid #14532d',
+            borderRadius: 8,
+            padding: '16px 20px',
+            fontSize: 12,
+          }}>
+            {lesson.journal_text}
+          </pre>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── 메인 ─────────────────────────────────────────────────
 export default function Home() {
-  const [tab, setTab]         = useState('dashboard')  // 'dashboard' | 'journal'
+  const [tab, setTab]         = useState('dashboard')  // 'dashboard' | 'lesson' | 'journal'
   const [status, setStatus]   = useState(null)
+  const [lesson, setLesson]   = useState(null)
   const [journals, setJournals] = useState([])
   const [selected, setSelected] = useState(null)
   const [content, setContent] = useState('')
@@ -197,9 +440,15 @@ export default function Home() {
 
   useEffect(() => {
     loadStatus()
-    const t = setInterval(loadStatus, 60_000)  // 1분마다 갱신
+    const t = setInterval(loadStatus, 60_000)
     return () => clearInterval(t)
   }, [loadStatus])
+
+  // 수업 탭 진입 시 lesson.json 로드
+  useEffect(() => {
+    if (tab !== 'lesson') return
+    fetchLesson().then(setLesson)
+  }, [tab])
 
   // 일지 목록
   useEffect(() => {
@@ -225,7 +474,8 @@ export default function Home() {
       {/* 탭 */}
       <div style={styles.tabBar}>
         <button style={styles.tab(tab === 'dashboard')} onClick={() => setTab('dashboard')}>대시보드</button>
-        <button style={styles.tab(tab === 'journal')} onClick={() => setTab('journal')}>매매일지</button>
+        <button style={styles.tab(tab === 'lesson')}    onClick={() => setTab('lesson')}>📚 오늘의 수업</button>
+        <button style={styles.tab(tab === 'journal')}   onClick={() => setTab('journal')}>매매일지</button>
       </div>
 
       {/* 대시보드 탭 */}
@@ -234,7 +484,7 @@ export default function Home() {
 
           {/* ETF 워치리스트 */}
           <div style={styles.section}>
-            <div style={styles.sectionTitle}>ETF 워치리스트</div>
+            <div style={styles.sectionTitle}>ETF 워치리스트 (버킷A)</div>
             <div style={styles.grid}>
               {status?.watchlist?.length
                 ? status.watchlist.map(item => <EtfCard key={item.code} item={item} />)
@@ -243,7 +493,24 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 보유 포지션 */}
+          {/* 버킷B 포지션 */}
+          {status?.bucket_b_positions?.length > 0 && (
+            <div style={styles.section}>
+              <div style={styles.sectionTitle}>📚 버킷B — 개별주 단타 (수업 연동)</div>
+              {status.bucket_b_positions.map((p, i) => (
+                <div key={i} style={styles.tradeRow}>
+                  <span style={{ color: '#93c5fd', fontWeight: 700, flex: 1 }}>{p.name}</span>
+                  <span style={{ color: '#9ca3af', fontSize: 12 }}>평균 {p.avg_price?.toLocaleString()}원</span>
+                  <span style={{ color: '#9ca3af', fontSize: 12 }}>{p.qty}주</span>
+                  <span style={{ color: pnlColor(p.pnl), fontSize: 13, fontWeight: 600, minWidth: 100, textAlign: 'right' }}>
+                    {pnlSign(p.pnl)}{p.pnl?.toLocaleString()}원
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 보유 포지션 (ETF/SWING) */}
           {status?.positions?.length > 0 && (
             <div style={styles.section}>
               <div style={styles.sectionTitle}>보유 포지션</div>
@@ -282,6 +549,9 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* 수업 탭 */}
+      {tab === 'lesson' && <LessonTab lesson={lesson} />}
 
       {/* 일지 탭 */}
       {tab === 'journal' && (
@@ -387,6 +657,13 @@ const styles = {
     borderRadius: 20,
     background: color === 'green' ? '#14532d' : '#713f12',
     color: color === 'green' ? '#4ade80' : '#facc15',
+  }),
+  infoBadge: (color) => ({
+    fontSize: 11,
+    padding: '2px 10px',
+    borderRadius: 20,
+    background: color === 'blue' ? '#1e3a5f' : '#1f2937',
+    color: color === 'blue' ? '#93c5fd' : '#9ca3af',
   }),
   tradeRow: {
     display: 'flex',
