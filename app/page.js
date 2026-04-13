@@ -191,6 +191,101 @@ function TodayTrades({ trades }) {
   )
 }
 
+// ── 컴포넌트: 내 매매 탭 ─────────────────────────────────
+function MyTradeTab({ status }) {
+  const userPos   = status?.user_positions   || []
+  const enginePos = status?.positions        || []
+  const bucketB   = status?.bucket_b_positions || []
+  const trades    = status?.today_trades     || []
+
+  // 실적 비교: 엔진 vs 사용자
+  const enginePnl = trades.filter(t => t.type === 'SELL' && t.bucket !== 'bucket_b')
+                          .reduce((s, t) => s + (t.pnl || 0), 0)
+  const bucketBPnl = trades.filter(t => t.type === 'SELL' && t.bucket === 'bucket_b')
+                           .reduce((s, t) => s + (t.pnl || 0), 0)
+
+  return (
+    <div style={{ padding: '20px 24px', maxWidth: 960, margin: '0 auto' }}>
+
+      {/* 실적 비교 */}
+      <div style={styles.section}>
+        <div style={styles.sectionTitle}>오늘 실적 비교</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ ...styles.card, borderColor: '#1d4ed8' }}>
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>🤖 엔진 (ETF/SWING)</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: pnlColor(enginePnl) }}>
+              {pnlSign(enginePnl)}{enginePnl.toLocaleString()}원
+            </div>
+            <div style={{ fontSize: 11, color: '#4b5563', marginTop: 4 }}>
+              {trades.filter(t => t.type === 'SELL' && t.bucket !== 'bucket_b').length}건 매도
+            </div>
+          </div>
+          <div style={{ ...styles.card, borderColor: '#6b21a8' }}>
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>📚 버킷B (수업 연동)</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: pnlColor(bucketBPnl) }}>
+              {pnlSign(bucketBPnl)}{bucketBPnl.toLocaleString()}원
+            </div>
+            <div style={{ fontSize: 11, color: '#4b5563', marginTop: 4 }}>
+              {trades.filter(t => t.type === 'SELL' && t.bucket === 'bucket_b').length}건 매도
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 수동 포지션 (엔진이 모르는 것) */}
+      <div style={styles.section}>
+        <div style={styles.sectionTitle}>
+          내 수동 매매 포지션 ({userPos.length}개)
+          <span style={{ fontSize: 11, color: '#4b5563', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>
+            — 엔진이 모르는 계좌 보유 종목
+          </span>
+        </div>
+        {userPos.length === 0 ? (
+          <div style={{ color: '#4b5563', fontSize: 13, padding: '12px 0' }}>수동 포지션 없음</div>
+        ) : (
+          userPos.map((p, i) => (
+            <div key={i} style={styles.tradeRow}>
+              <span style={{ color: '#c084fc', fontWeight: 700, flex: 1 }}>{p.name || p.code}</span>
+              <span style={{ color: '#9ca3af', fontSize: 12 }}>평균 {p.avg_price?.toLocaleString()}원</span>
+              <span style={{ color: '#9ca3af', fontSize: 12 }}>{p.qty}주</span>
+              <span style={{ color: pnlColor(p.pnl), fontSize: 13, fontWeight: 600, minWidth: 120, textAlign: 'right' }}>
+                {pnlSign(p.pnl)}{p.pnl?.toLocaleString()}원
+                {p.pnl_pct != null && (
+                  <span style={{ fontSize: 11, marginLeft: 4 }}>({pnlSign(p.pnl_pct)}{Number(p.pnl_pct).toFixed(2)}%)</span>
+                )}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* 엔진 포지션 현황 */}
+      {(enginePos.length > 0 || bucketB.length > 0) && (
+        <div style={styles.section}>
+          <div style={styles.sectionTitle}>엔진 보유 포지션</div>
+          {[...enginePos, ...bucketB].map((p, i) => {
+            const pnl = p.pnl ?? ((p.price - p.avg_price) * p.qty || 0)
+            const pct = p.avg_price ? ((p.price - p.avg_price) / p.avg_price * 100) : 0
+            return (
+              <div key={i} style={styles.tradeRow}>
+                <span style={{ color: '#e2e8f0', fontWeight: 700, flex: 1 }}>{p.name}</span>
+                <span style={{ color: '#9ca3af', fontSize: 12 }}>평균 {p.avg_price?.toLocaleString()}원</span>
+                <span style={{ color: '#9ca3af', fontSize: 12 }}>{p.qty}주</span>
+                <span style={{ color: pnlColor(pnl), fontSize: 13, fontWeight: 600, minWidth: 120, textAlign: 'right' }}>
+                  {pnlSign(pnl)}{pnl.toLocaleString()}원 ({pnlSign(pct)}{pct.toFixed(2)}%)
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* 오늘 전체 매매 내역 */}
+      <TodayTrades trades={trades} />
+    </div>
+  )
+}
+
 // ── 컴포넌트: 캔들차트 (lightweight-charts) ──────────────
 function CandleChart({ chartData, ma20, height = 220 }) {
   const containerRef = useRef(null)
@@ -424,7 +519,7 @@ function LessonTab({ lesson }) {
 
 // ── 메인 ─────────────────────────────────────────────────
 export default function Home() {
-  const [tab, setTab]         = useState('dashboard')  // 'dashboard' | 'lesson' | 'journal'
+  const [tab, setTab]         = useState('dashboard')  // 'dashboard' | 'lesson' | 'mytrade' | 'journal'
   const [status, setStatus]   = useState(null)
   const [lesson, setLesson]   = useState(null)
   const [journals, setJournals] = useState([])
@@ -475,6 +570,7 @@ export default function Home() {
       <div style={styles.tabBar}>
         <button style={styles.tab(tab === 'dashboard')} onClick={() => setTab('dashboard')}>대시보드</button>
         <button style={styles.tab(tab === 'lesson')}    onClick={() => setTab('lesson')}>📚 오늘의 수업</button>
+        <button style={styles.tab(tab === 'mytrade')}   onClick={() => setTab('mytrade')}>내 매매</button>
         <button style={styles.tab(tab === 'journal')}   onClick={() => setTab('journal')}>매매일지</button>
       </div>
 
@@ -552,6 +648,9 @@ export default function Home() {
 
       {/* 수업 탭 */}
       {tab === 'lesson' && <LessonTab lesson={lesson} />}
+
+      {/* 내 매매 탭 */}
+      {tab === 'mytrade' && <MyTradeTab status={status} />}
 
       {/* 일지 탭 */}
       {tab === 'journal' && (
