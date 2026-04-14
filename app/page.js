@@ -639,8 +639,38 @@ export default function Home() {
               <p>장중에 현재가가 목표가를 돌파하면 → <b style={{ color: '#60a5fa' }}>매수</b></p>
               <p>오후 3시 10분이 되면 → <b style={{ color: '#f87171' }}>자동 매도</b> (ETF 데이트레이딩)</p>
               <p style={{ marginTop: 8, color: '#6b7280', fontSize: 12 }}>
-                위 차트의 <b style={{ color: '#facc15' }}>노란선</b>이 오늘의 목표가예요. 현재가가 그 선을 넘으면 매수해요.
+                위 카드의 <b style={{ color: '#facc15' }}>노란선 숫자</b>가 오늘의 목표가예요. 현재가가 그 숫자를 넘으면 매수해요.
               </p>
+
+              <div style={{ marginTop: 16, borderTop: '1px solid #2a2a2a', paddingTop: 14 }}>
+                <p style={{ color: '#facc15', fontWeight: 700, marginBottom: 6 }}>❓ 자주 헷갈리는 것들</p>
+
+                <p style={{ color: '#e2e8f0', marginBottom: 4 }}>
+                  <b>Q. 현재가가 목표가보다 높은데 왜 손실이 나요?</b>
+                </p>
+                <p style={{ color: '#9ca3af', marginBottom: 12 }}>
+                  목표가 = "이 가격 넘으면 매수!" 신호예요. 천장이 아니에요.<br/>
+                  예) 목표가 91,000원 → 91,200원에 매수 → 오후에 90,500원으로 내려가면 손실.<br/>
+                  레버리지 ETF는 변동성이 커서 오전에 치고 오후에 빠지는 경우가 많아요.
+                </p>
+
+                <p style={{ color: '#e2e8f0', marginBottom: 4 }}>
+                  <b>Q. 목표 달성(돌파)이 3개인데 왜 손실 종목이 있어요?</b>
+                </p>
+                <p style={{ color: '#9ca3af', marginBottom: 12 }}>
+                  목표가 돌파 = 매수 시점이에요. 그 이후 가격이 다시 내려가면 손실이에요.<br/>
+                  '목표 달성'은 "오늘 신호가 발동됐다"는 뜻이지, "수익이 났다"는 뜻이 아니에요.<br/>
+                  3시 10분에 강제 청산할 때 현재가가 매수가보다 낮으면 손실이 확정돼요.
+                </p>
+
+                <p style={{ color: '#e2e8f0', marginBottom: 4 }}>
+                  <b>Q. "내 매매" 탭은 뭔가요?</b>
+                </p>
+                <p style={{ color: '#9ca3af' }}>
+                  엔진이 자동으로 산 것 말고, 내가 직접 수동으로 산 종목들이 표시돼요.<br/>
+                  "오늘의 수업" 추천 종목을 직접 매수했다면 거기서 확인할 수 있어요.
+                </p>
+              </div>
             </div>
           </div>
         </div>
