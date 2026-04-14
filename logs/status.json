@@ -1,56 +1,156 @@
 {
-  "updated_at": "2026-04-13 19:47:07",
-  "cash": 99885130,
-  "vix": 21.299999237060547,
-  "vix_status": "위험",
+  "updated_at": "2026-04-14 09:31:02",
+  "cash": 40836495,
+  "vix": 19.1299991607666,
+  "vix_status": "정상",
   "market": {
-    "sp500_chg": -0.1138521091652343,
-    "nq_chg": 0.2394277676353515
+    "sp500_chg": 1.0173274948748265,
+    "nq_chg": 2.1009786610002097
   },
   "regime": "unknown",
   "watchlist": [
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 88845,
-      "target": 91932,
-      "prev_close": 88845,
-      "pct_to_target": -3.36,
-      "holding": false,
-      "triggered": false
+      "price": 94765,
+      "target": 90530,
+      "prev_close": 94110,
+      "pct_to_target": 4.68,
+      "holding": true,
+      "triggered": true
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 14505,
-      "target": 14703,
-      "prev_close": 14505,
-      "pct_to_target": -1.35,
-      "holding": false,
-      "triggered": false
+      "price": 14975,
+      "target": 14843,
+      "prev_close": 15005,
+      "pct_to_target": 0.89,
+      "holding": true,
+      "triggered": true
     },
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 25065,
-      "target": 25200,
-      "prev_close": 25065,
-      "pct_to_target": -0.54,
-      "holding": false,
-      "triggered": false
+      "price": 25310,
+      "target": 25133,
+      "prev_close": 25285,
+      "pct_to_target": 0.7,
+      "holding": true,
+      "triggered": true
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 164680,
-      "target": 165405,
-      "prev_close": 164680,
-      "pct_to_target": -0.44,
-      "holding": false,
-      "triggered": false
+      "price": 166715,
+      "target": 165042,
+      "prev_close": 166545,
+      "pct_to_target": 1.01,
+      "holding": true,
+      "triggered": true
     }
   ],
-  "positions": [],
-  "today_trades": [],
+  "positions": [
+    {
+      "code": "122630",
+      "name": "KODEX 레버리지",
+      "price": 94765,
+      "avg_price": 0,
+      "qty": 211
+    },
+    {
+      "code": "233740",
+      "name": "KODEX 코스닥150 레버리지",
+      "price": 14975,
+      "avg_price": 0,
+      "qty": 1069
+    },
+    {
+      "code": "360750",
+      "name": "TIGER 미국S&P500",
+      "price": 25310,
+      "avg_price": 0,
+      "qty": 504
+    },
+    {
+      "code": "133690",
+      "name": "TIGER 미국나스닥100",
+      "price": 166715,
+      "avg_price": 0,
+      "qty": 61
+    }
+  ],
+  "bucket_b_positions": [],
+  "user_positions": [],
+  "today_trades": [
+    {
+      "type": "BUY",
+      "dt": "2026-04-14 09:30:03",
+      "code": "122630",
+      "name": "KODEX 레버리지",
+      "price": 94575,
+      "qty": 211,
+      "amount": 19955325,
+      "bucket": "day",
+      "target": 90530,
+      "vix": 19.1299991607666,
+      "regime": "unknown",
+      "us": {
+        "sp500_chg": 1.0173274948748265,
+        "nq_chg": 2.0451121818852944
+      }
+    },
+    {
+      "type": "BUY",
+      "dt": "2026-04-14 09:30:07",
+      "code": "233740",
+      "name": "KODEX 코스닥150 레버리지",
+      "price": 14945,
+      "qty": 1069,
+      "amount": 15976205,
+      "bucket": "day",
+      "target": 14843,
+      "vix": 19.1299991607666,
+      "regime": "unknown",
+      "us": {
+        "sp500_chg": 1.0173274948748265,
+        "nq_chg": 2.0451121818852944
+      }
+    },
+    {
+      "type": "BUY",
+      "dt": "2026-04-14 09:30:12",
+      "code": "360750",
+      "name": "TIGER 미국S&P500",
+      "price": 25305,
+      "qty": 504,
+      "amount": 12753720,
+      "bucket": "day",
+      "target": 25133,
+      "vix": 19.1299991607666,
+      "regime": "unknown",
+      "us": {
+        "sp500_chg": 1.0173274948748265,
+        "nq_chg": 2.0451121818852944
+      }
+    },
+    {
+      "type": "BUY",
+      "dt": "2026-04-14 09:30:16",
+      "code": "133690",
+      "name": "TIGER 미국나스닥100",
+      "price": 166690,
+      "qty": 61,
+      "amount": 10168090,
+      "bucket": "day",
+      "target": 165042,
+      "vix": 19.1299991607666,
+      "regime": "unknown",
+      "us": {
+        "sp500_chg": 1.0173274948748265,
+        "nq_chg": 2.0451121818852944
+      }
+    }
+  ],
   "today_pnl": 0
 }
