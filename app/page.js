@@ -519,7 +519,7 @@ function LessonTab({ lesson }) {
 
 // ── 메인 ─────────────────────────────────────────────────
 export default function Home() {
-  const [tab, setTab]         = useState('dashboard')  // 'dashboard' | 'lesson' | 'mytrade' | 'journal'
+  const [tab, setTab]         = useState('dashboard')  // 'dashboard' | 'lesson' | 'mytrade' | 'journal' | 'etf'
   const [status, setStatus]   = useState(null)
   const [lesson, setLesson]   = useState(null)
   const [journals, setJournals] = useState([])
@@ -572,6 +572,7 @@ export default function Home() {
         <button style={styles.tab(tab === 'lesson')}    onClick={() => setTab('lesson')}>📚 오늘의 수업</button>
         <button style={styles.tab(tab === 'mytrade')}   onClick={() => setTab('mytrade')}>내 매매</button>
         <button style={styles.tab(tab === 'journal')}   onClick={() => setTab('journal')}>매매일지</button>
+        <button style={styles.tab(tab === 'etf')}       onClick={() => setTab('etf')}>📊 ETF 시그널</button>
       </div>
 
       {/* 대시보드 탭 */}
@@ -674,6 +675,15 @@ export default function Home() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ETF 시그널 탭 */}
+      {tab === 'etf' && (
+        <iframe
+          src="https://etf-signal-app-v3.vercel.app"
+          style={{ width: '100%', height: 'calc(100vh - 110px)', border: 'none', display: 'block' }}
+          title="ETF 시그널"
+        />
       )}
 
       {/* 수업 탭 */}
