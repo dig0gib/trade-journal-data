@@ -1,175 +1,58 @@
 {
-  "updated_at": "2026-04-14 19:05:59",
-  "cash": 99450010,
-  "vix": 18.6200008392334,
+  "updated_at": "2026-04-15 09:20:45",
+  "cash": 99248440,
+  "vix": 18.360000610351562,
   "vix_status": "정상",
   "market": {
-    "sp500_chg": 1.0173274948748265,
-    "nq_chg": 0.20227485928705438
+    "sp500_chg": 1.178286636479279,
+    "nq_chg": 1.6778064415259537
   },
   "regime": "unknown",
   "watchlist": [
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 94185,
-      "target": 90530,
-      "prev_close": 94110,
-      "pct_to_target": 4.04,
+      "price": 101545,
+      "target": 95953,
+      "prev_close": 101477,
+      "pct_to_target": 5.83,
       "holding": false,
       "triggered": true
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 14805,
-      "target": 14843,
-      "prev_close": 15005,
-      "pct_to_target": -0.26,
+      "price": 0,
+      "target": 15027,
+      "prev_close": 15225,
+      "pct_to_target": -100.0,
       "holding": false,
       "triggered": false
     },
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 25330,
-      "target": 25133,
-      "prev_close": 25285,
-      "pct_to_target": 0.78,
+      "price": 0,
+      "target": 25414,
+      "prev_close": 25530,
+      "pct_to_target": -100.0,
       "holding": false,
-      "triggered": true
+      "triggered": false
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 166875,
-      "target": 165042,
-      "prev_close": 166545,
-      "pct_to_target": 1.11,
+      "price": 0,
+      "target": 167372,
+      "prev_close": 168990,
+      "pct_to_target": -100.0,
       "holding": false,
-      "triggered": true
+      "triggered": false
     }
   ],
   "positions": [],
   "bucket_b_positions": [],
   "user_positions": [],
-  "today_trades": [
-    {
-      "type": "BUY",
-      "dt": "2026-04-14 09:30:03",
-      "code": "122630",
-      "name": "KODEX 레버리지",
-      "price": 94575,
-      "qty": 211,
-      "amount": 19955325,
-      "bucket": "day",
-      "target": 90530,
-      "vix": 19.1299991607666,
-      "regime": "unknown",
-      "us": {
-        "sp500_chg": 1.0173274948748265,
-        "nq_chg": 2.0451121818852944
-      }
-    },
-    {
-      "type": "BUY",
-      "dt": "2026-04-14 09:30:07",
-      "code": "233740",
-      "name": "KODEX 코스닥150 레버리지",
-      "price": 14945,
-      "qty": 1069,
-      "amount": 15976205,
-      "bucket": "day",
-      "target": 14843,
-      "vix": 19.1299991607666,
-      "regime": "unknown",
-      "us": {
-        "sp500_chg": 1.0173274948748265,
-        "nq_chg": 2.0451121818852944
-      }
-    },
-    {
-      "type": "BUY",
-      "dt": "2026-04-14 09:30:12",
-      "code": "360750",
-      "name": "TIGER 미국S&P500",
-      "price": 25305,
-      "qty": 504,
-      "amount": 12753720,
-      "bucket": "day",
-      "target": 25133,
-      "vix": 19.1299991607666,
-      "regime": "unknown",
-      "us": {
-        "sp500_chg": 1.0173274948748265,
-        "nq_chg": 2.0451121818852944
-      }
-    },
-    {
-      "type": "BUY",
-      "dt": "2026-04-14 09:30:16",
-      "code": "133690",
-      "name": "TIGER 미국나스닥100",
-      "price": 166690,
-      "qty": 61,
-      "amount": 10168090,
-      "bucket": "day",
-      "target": 165042,
-      "vix": 19.1299991607666,
-      "regime": "unknown",
-      "us": {
-        "sp500_chg": 1.0173274948748265,
-        "nq_chg": 2.0451121818852944
-      }
-    },
-    {
-      "type": "SELL",
-      "dt": "2026-04-14 15:10:11",
-      "code": "133690",
-      "name": "TIGER 미국나스닥100",
-      "price": 166950,
-      "qty": 61,
-      "pnl": 15860,
-      "pnl_pct": 0.16,
-      "reason": "강제청산",
-      "vix": 19.1299991607666
-    },
-    {
-      "type": "SELL",
-      "dt": "2026-04-14 15:10:16",
-      "code": "233740",
-      "name": "KODEX 코스닥150 레버리지",
-      "price": 14730,
-      "qty": 1069,
-      "pnl": -229835,
-      "pnl_pct": -1.44,
-      "reason": "강제청산",
-      "vix": 19.1299991607666
-    },
-    {
-      "type": "SELL",
-      "dt": "2026-04-14 15:10:22",
-      "code": "122630",
-      "name": "KODEX 레버리지",
-      "price": 94345,
-      "qty": 211,
-      "pnl": -48530,
-      "pnl_pct": -0.24,
-      "reason": "강제청산",
-      "vix": 19.1299991607666
-    },
-    {
-      "type": "SELL",
-      "dt": "2026-04-14 15:10:28",
-      "code": "360750",
-      "name": "TIGER 미국S&P500",
-      "price": 25350,
-      "qty": 504,
-      "pnl": 22680,
-      "pnl_pct": 0.18,
-      "reason": "강제청산",
-      "vix": 19.1299991607666
-    }
-  ],
-  "today_pnl": -239825
+  "today_trades": [],
+  "today_pnl": 0
 }
