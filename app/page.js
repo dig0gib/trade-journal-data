@@ -15,20 +15,32 @@ async function fetchStatus() {
   } catch { return null }
 }
 
-async function fetchCumulativePnl() {
+async function fetchTradeStats() {
   try {
     const res = await fetch(`${RAW}/logs/trades.jsonl`, { cache: 'no-store' })
     if (!res.ok) return null
     const text = await res.text()
     const lines = text.trim().split('\n').filter(Boolean)
-    let total = 0
+    const sells = []
+    const dailyMap = {}
     for (const line of lines) {
       try {
         const t = JSON.parse(line)
-        if (t.type === 'SELL' && typeof t.pnl === 'number') total += t.pnl
+        if (t.type === 'SELL' && typeof t.pnl === 'number') {
+          sells.push(t)
+          const date = (t.dt || '').slice(0, 10)
+          if (date) dailyMap[date] = (dailyMap[date] || 0) + t.pnl
+        }
       } catch {}
     }
-    return total
+    const total = sells.reduce((s, t) => s + t.pnl, 0)
+    const wins = sells.filter(t => t.pnl > 0)
+    const losses = sells.filter(t => t.pnl <= 0)
+    const winRate = sells.length ? wins.length / sells.length : 0
+    const avgWin = wins.length ? wins.reduce((s, t) => s + t.pnl, 0) / wins.length : 0
+    const avgLoss = losses.length ? losses.reduce((s, t) => s + t.pnl, 0) / losses.length : 0
+    const expectancy = winRate * avgWin + (1 - winRate) * avgLoss
+    return { total, daily: dailyMap, winRate, avgWin, avgLoss, expectancy, tradeCount: sells.length }
   } catch { return null }
 }
 
@@ -217,21 +229,113 @@ function TodayTrades({ trades }) {
 
 // ── 컴포넌트: 내 매매 탭 ─────────────────────────────────
 function MyTradeTab({ status }) {
-  const userPos   = status?.user_positions   || []
   const enginePos = status?.positions        || []
   const bucketB   = status?.bucket_b_positions || []
   const trades    = status?.today_trades     || []
+
+  const [manualPos, setManualPos] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('manual_positions') || '[]') }
+    catch { return [] }
+  })
+  const [form, setForm] = useState({ name: '', code: '', price: '', qty: '' })
+  const [showForm, setShowForm] = useState(false)
+
+  function saveManual(list) {
+    setManualPos(list)
+    localStorage.setItem('manual_positions', JSON.stringify(list))
+  }
+
+  function addPosition() {
+    if (!form.name || !form.price || !form.qty) return
+    saveManual([...manualPos, {
+      id: Date.now(),
+      name: form.name,
+      code: form.code,
+      avg_price: Number(form.price),
+      qty: Number(form.qty),
+      bought_at: new Date().toISOString().slice(0, 10),
+    }])
+    setForm({ name: '', code: '', price: '', qty: '' })
+    setShowForm(false)
+  }
+
+  function removePosition(id) {
+    saveManual(manualPos.filter(p => p.id !== id))
+  }
 
   // 실적 비교: 엔진 vs 사용자
   const enginePnl = trades.filter(t => t.type === 'SELL' && t.bucket !== 'bucket_b')
                           .reduce((s, t) => s + (t.pnl || 0), 0)
   const bucketBPnl = trades.filter(t => t.type === 'SELL' && t.bucket === 'bucket_b')
                            .reduce((s, t) => s + (t.pnl || 0), 0)
+  const manualCost = manualPos.reduce((s, p) => s + p.avg_price * p.qty, 0)
 
   return (
     <div style={{ padding: '20px 24px', maxWidth: 960, margin: '0 auto' }}>
 
-      {/* 실적 비교 */}
+      {/* 수동 매매 입력 */}
+      <div style={styles.section}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div style={styles.sectionTitle}>✍️ 내 수동 매매 ({manualPos.length}건 · 투자금 {manualCost.toLocaleString()}원)</div>
+          <button
+            onClick={() => setShowForm(f => !f)}
+            style={{ fontSize: 12, padding: '5px 14px', background: showForm ? '#1f2937' : '#1e3a5f', border: '1px solid #3b82f6', borderRadius: 6, color: '#93c5fd', cursor: 'pointer' }}
+          >
+            {showForm ? '취소' : '+ 종목 추가'}
+          </button>
+        </div>
+
+        {showForm && (
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: 8, marginBottom: 14, alignItems: 'center' }}>
+            {[
+              { key: 'name', placeholder: '종목명 *', type: 'text' },
+              { key: 'code', placeholder: '코드 (선택)', type: 'text' },
+              { key: 'price', placeholder: '매수가 *', type: 'number' },
+              { key: 'qty', placeholder: '수량 *', type: 'number' },
+            ].map(({ key, placeholder, type }) => (
+              <input
+                key={key}
+                type={type}
+                placeholder={placeholder}
+                value={form[key]}
+                onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                style={{ padding: '7px 10px', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 6, color: '#e2e8f0', fontSize: 13, outline: 'none' }}
+              />
+            ))}
+            <button
+              onClick={addPosition}
+              style={{ padding: '7px 16px', background: '#166534', border: 'none', borderRadius: 6, color: '#4ade80', fontSize: 13, cursor: 'pointer', fontWeight: 700 }}
+            >
+              추가
+            </button>
+          </div>
+        )}
+
+        {manualPos.length === 0 ? (
+          <div style={{ color: '#4b5563', fontSize: 13, padding: '12px 0' }}>
+            수동 매매 없음 — 위 버튼으로 직접 매수한 종목 추가
+          </div>
+        ) : (
+          manualPos.map(p => (
+            <div key={p.id} style={{ ...styles.tradeRow, flexWrap: 'wrap' }}>
+              <span style={{ color: '#c084fc', fontWeight: 700, flex: 1, minWidth: 100 }}>{p.name}</span>
+              {p.code && <span style={{ color: '#4b5563', fontSize: 11 }}>{p.code}</span>}
+              <span style={{ color: '#9ca3af', fontSize: 12 }}>평단 {p.avg_price.toLocaleString()}원</span>
+              <span style={{ color: '#9ca3af', fontSize: 12 }}>{p.qty}주</span>
+              <span style={{ color: '#6b7280', fontSize: 12 }}>투자 {(p.avg_price * p.qty).toLocaleString()}원</span>
+              <span style={{ color: '#374151', fontSize: 11 }}>{p.bought_at}</span>
+              <button
+                onClick={() => removePosition(p.id)}
+                style={{ padding: '2px 8px', background: 'transparent', border: '1px solid #374151', borderRadius: 4, color: '#6b7280', fontSize: 11, cursor: 'pointer' }}
+              >
+                삭제
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* 오늘 실적 비교 */}
       <div style={styles.section}>
         <div style={styles.sectionTitle}>오늘 실적 비교</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -254,33 +358,6 @@ function MyTradeTab({ status }) {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 수동 포지션 (엔진이 모르는 것) */}
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>
-          내 수동 매매 포지션 ({userPos.length}개)
-          <span style={{ fontSize: 11, color: '#4b5563', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>
-            — 엔진이 모르는 계좌 보유 종목
-          </span>
-        </div>
-        {userPos.length === 0 ? (
-          <div style={{ color: '#4b5563', fontSize: 13, padding: '12px 0' }}>수동 포지션 없음</div>
-        ) : (
-          userPos.map((p, i) => (
-            <div key={i} style={styles.tradeRow}>
-              <span style={{ color: '#c084fc', fontWeight: 700, flex: 1 }}>{p.name || p.code}</span>
-              <span style={{ color: '#9ca3af', fontSize: 12 }}>평균 {p.avg_price?.toLocaleString()}원</span>
-              <span style={{ color: '#9ca3af', fontSize: 12 }}>{p.qty}주</span>
-              <span style={{ color: pnlColor(p.pnl), fontSize: 13, fontWeight: 600, minWidth: 120, textAlign: 'right' }}>
-                {pnlSign(p.pnl)}{p.pnl?.toLocaleString()}원
-                {p.pnl_pct != null && (
-                  <span style={{ fontSize: 11, marginLeft: 4 }}>({pnlSign(p.pnl_pct)}{Number(p.pnl_pct).toFixed(2)}%)</span>
-                )}
-              </span>
-            </div>
-          ))
-        )}
       </div>
 
       {/* 엔진 포지션 현황 */}
@@ -306,6 +383,107 @@ function MyTradeTab({ status }) {
 
       {/* 오늘 전체 매매 내역 */}
       <TodayTrades trades={trades} />
+    </div>
+  )
+}
+
+// ── 컴포넌트: 일별 손익 차트 ─────────────────────────────
+function DailyPnlChart({ daily }) {
+  if (!daily || Object.keys(daily).length === 0) return null
+  const entries = Object.entries(daily).sort(([a], [b]) => a.localeCompare(b))
+  const maxAbs = Math.max(...entries.map(([, v]) => Math.abs(v)), 1)
+  return (
+    <div style={styles.section}>
+      <div style={styles.sectionTitle}>일별 손익 추이</div>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 130, padding: '0 4px' }}>
+        {entries.map(([date, pnl]) => {
+          const pct = Math.abs(pnl) / maxAbs
+          const barH = Math.max(4, Math.round(pct * 90))
+          const isPos = pnl >= 0
+          return (
+            <div key={date} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <div style={{ fontSize: 10, color: pnlColor(pnl), fontWeight: 700, whiteSpace: 'nowrap' }}>
+                {isPos ? '+' : ''}{(pnl / 1000).toFixed(0)}K
+              </div>
+              <div style={{
+                width: '100%',
+                height: barH,
+                background: isPos ? '#16a34a' : '#dc2626',
+                borderRadius: '3px 3px 0 0',
+                minHeight: 4,
+              }} />
+              <div style={{ fontSize: 10, color: '#4b5563', whiteSpace: 'nowrap' }}>
+                {date.slice(5)}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ── 컴포넌트: 매매 통계 카드 ─────────────────────────────
+function StatsCard({ stats }) {
+  if (!stats || !stats.tradeCount) return null
+  const { winRate, avgWin, avgLoss, expectancy, tradeCount } = stats
+  return (
+    <div style={styles.section}>
+      <div style={styles.sectionTitle}>매매 통계 ({tradeCount}건 기준)</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+        {[
+          { label: '승률', value: `${(winRate * 100).toFixed(0)}%`, color: winRate >= 0.5 ? '#4ade80' : '#f87171' },
+          { label: '평균 수익', value: `+${Math.round(avgWin).toLocaleString()}원`, color: '#4ade80' },
+          { label: '평균 손실', value: `${Math.round(avgLoss).toLocaleString()}원`, color: '#f87171' },
+          { label: '기대값/건', value: `${expectancy >= 0 ? '+' : ''}${Math.round(expectancy).toLocaleString()}원`, color: pnlColor(expectancy) },
+        ].map(({ label, value, color }) => (
+          <div key={label} style={{ ...styles.card, textAlign: 'center', padding: '12px 8px' }}>
+            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 6 }}>{label}</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color }}>{value}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize: 11, color: '#374151', marginTop: 8 }}>
+        기대값 = 승률×평균수익 + (1-승률)×평균손실 | 양수면 장기 우상향 전략
+      </div>
+    </div>
+  )
+}
+
+// ── 컴포넌트: 내일 예고 ───────────────────────────────────
+function TomorrowSignals({ watchlist }) {
+  if (!watchlist?.length) return null
+  return (
+    <div style={styles.section}>
+      <div style={styles.sectionTitle}>📅 내일 예고 — 변동성 돌파 목표가</div>
+      <div style={{ fontSize: 12, color: '#374151', marginBottom: 10 }}>
+        아래 목표가를 내일 시초가 기준으로 돌파하면 자동 매수 신호 발동 (추정치, 시초가 미확정)
+      </div>
+      <div style={styles.grid}>
+        {watchlist.map(item => (
+          <div key={item.code} style={{ ...styles.card, borderColor: '#1e3a5f' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#93c5fd', marginBottom: 2 }}>{item.name}</div>
+            <div style={{ fontSize: 11, color: '#4b5563', marginBottom: 8 }}>{item.code}</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <div>
+                <div style={{ color: '#6b7280', fontSize: 10, marginBottom: 2 }}>목표가 (추정)</div>
+                <div style={{ color: '#facc15', fontWeight: 700, fontSize: 14 }}>
+                  {item.target ? item.target.toLocaleString() + '원' : '—'}
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ color: '#6b7280', fontSize: 10, marginBottom: 2 }}>전일 종가</div>
+                <div style={{ color: '#e2e8f0', fontSize: 13 }}>
+                  {item.prev_close ? item.prev_close.toLocaleString() + '원' : '—'}
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop: 6, fontSize: 10, color: '#374151' }}>
+              목표가 돌파 시 → 자동 매수
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -550,7 +728,7 @@ export default function Home() {
   const [selected, setSelected] = useState(null)
   const [content, setContent] = useState('')
   const [loadingJ, setLoadingJ] = useState(true)
-  const [totalPnl, setTotalPnl] = useState(null)
+  const [tradeStats, setTradeStats] = useState(null)
 
   // status 주기 갱신
   const loadStatus = useCallback(async () => {
@@ -564,9 +742,9 @@ export default function Home() {
     return () => clearInterval(t)
   }, [loadStatus])
 
-  // 누적 손익 (최초 1회)
+  // 매매 통계 (최초 1회)
   useEffect(() => {
-    fetchCumulativePnl().then(v => { if (v != null) setTotalPnl(v) })
+    fetchTradeStats().then(v => { if (v) setTradeStats(v) })
   }, [])
 
   // 수업 탭 진입 시 lesson.json 로드
@@ -594,7 +772,7 @@ export default function Home() {
 
   return (
     <div style={{ background: '#111', minHeight: '100vh', color: '#e2e8f0', fontFamily: "'Pretendard', 'Apple SD Gothic Neo', sans-serif" }}>
-      <StatusBar status={status} totalPnl={totalPnl} />
+      <StatusBar status={status} totalPnl={tradeStats?.total} />
 
       {/* 탭 */}
       <div style={styles.tabBar}>
@@ -657,6 +835,13 @@ export default function Home() {
               })}
             </div>
           )}
+
+          {/* 일별 손익 차트 + 통계 */}
+          <DailyPnlChart daily={tradeStats?.daily} />
+          <StatsCard stats={tradeStats} />
+
+          {/* 내일 예고 */}
+          <TomorrowSignals watchlist={status?.watchlist} />
 
           {/* 오늘 매매 내역 */}
           <TodayTrades trades={status?.today_trades} />
