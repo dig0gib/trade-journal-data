@@ -1,51 +1,51 @@
 {
-  "updated_at": "2026-04-16 10:30:49",
+  "updated_at": "2026-04-16 10:35:49",
   "cash": 40471066,
   "vix": 18.170000076293945,
   "vix_status": "정상",
   "market": {
     "sp500_chg": 0.7975783355387838,
-    "nq_chg": 1.617149665616112
+    "nq_chg": 1.649819355830579
   },
   "regime": "unknown",
   "watchlist": [
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 102225,
+      "price": 101895,
       "target": 101141,
       "prev_close": 99990,
-      "pct_to_target": 1.07,
+      "pct_to_target": 0.75,
       "holding": true,
       "triggered": true
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 16180,
+      "price": 16130,
       "target": 16273,
       "prev_close": 16085,
-      "pct_to_target": -0.57,
+      "pct_to_target": -0.88,
       "holding": true,
       "triggered": false
     },
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 25760,
+      "price": 25770,
       "target": 25546,
       "prev_close": 25755,
-      "pct_to_target": 0.84,
+      "pct_to_target": 0.88,
       "holding": true,
       "triggered": true
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 171690,
+      "price": 171750,
       "target": 169050,
       "prev_close": 171615,
-      "pct_to_target": 1.56,
+      "pct_to_target": 1.6,
       "holding": true,
       "triggered": true
     }
@@ -54,28 +54,28 @@
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 25760,
+      "price": 25770,
       "avg_price": 0,
       "qty": 768
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 171690,
+      "price": 171750,
       "avg_price": 0,
       "qty": 92
     },
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 102225,
+      "price": 101895,
       "avg_price": 0,
       "qty": 125
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 16180,
+      "price": 16130,
       "avg_price": 0,
       "qty": 621
     }
