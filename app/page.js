@@ -15,6 +15,23 @@ async function fetchStatus() {
   } catch { return null }
 }
 
+async function fetchCumulativePnl() {
+  try {
+    const res = await fetch(`${RAW}/logs/trades.jsonl`, { cache: 'no-store' })
+    if (!res.ok) return null
+    const text = await res.text()
+    const lines = text.trim().split('\n').filter(Boolean)
+    let total = 0
+    for (const line of lines) {
+      try {
+        const t = JSON.parse(line)
+        if (t.type === 'SELL' && typeof t.pnl === 'number') total += t.pnl
+      } catch {}
+    }
+    return total
+  } catch { return null }
+}
+
 async function fetchLesson() {
   try {
     const res = await fetch(`${RAW}/logs/lesson.json`, { cache: 'no-store' })
@@ -46,7 +63,7 @@ function pnlColor(v) { return v > 0 ? '#4ade80' : v < 0 ? '#f87171' : '#9ca3af' 
 function pnlSign(v) { return v > 0 ? '+' : '' }
 
 // ── 컴포넌트: 헤더 상태바 ────────────────────────────────
-function StatusBar({ status }) {
+function StatusBar({ status, totalPnl }) {
   if (!status) return (
     <div style={styles.header}>
       <span style={{ color: '#555' }}>데이터 로딩 중... (엔진이 꺼져 있거나 아직 push 전일 수 있어요)</span>
@@ -82,6 +99,13 @@ function StatusBar({ status }) {
             {pnlSign(today_pnl)}{(today_pnl || 0).toLocaleString()}원
           </b>
         </span>
+        {totalPnl != null && (
+          <span style={styles.headerBadge}>
+            누적 손익: <b style={{ color: pnlColor(totalPnl) }}>
+              {pnlSign(totalPnl)}{totalPnl.toLocaleString()}원
+            </b>
+          </span>
+        )}
         <span style={{ fontSize: 11, color: '#4b5563' }}>갱신: {updated_at?.slice(11, 16) || '—'}</span>
       </div>
     </div>
@@ -526,6 +550,7 @@ export default function Home() {
   const [selected, setSelected] = useState(null)
   const [content, setContent] = useState('')
   const [loadingJ, setLoadingJ] = useState(true)
+  const [totalPnl, setTotalPnl] = useState(null)
 
   // status 주기 갱신
   const loadStatus = useCallback(async () => {
@@ -538,6 +563,11 @@ export default function Home() {
     const t = setInterval(loadStatus, 60_000)
     return () => clearInterval(t)
   }, [loadStatus])
+
+  // 누적 손익 (최초 1회)
+  useEffect(() => {
+    fetchCumulativePnl().then(v => { if (v != null) setTotalPnl(v) })
+  }, [])
 
   // 수업 탭 진입 시 lesson.json 로드
   useEffect(() => {
@@ -564,7 +594,7 @@ export default function Home() {
 
   return (
     <div style={{ background: '#111', minHeight: '100vh', color: '#e2e8f0', fontFamily: "'Pretendard', 'Apple SD Gothic Neo', sans-serif" }}>
-      <StatusBar status={status} />
+      <StatusBar status={status} totalPnl={totalPnl} />
 
       {/* 탭 */}
       <div style={styles.tabBar}>
@@ -633,14 +663,45 @@ export default function Home() {
 
           {/* 전략 설명 */}
           <div style={styles.section}>
-            <div style={styles.sectionTitle}>전략 이해하기 (주린이 가이드)</div>
+            <div style={styles.sectionTitle}>전략 이해하기 — 오늘 매매로 배우는 변동성 돌파</div>
             <div style={styles.guideBox}>
-              <p><b style={{ color: '#facc15' }}>변동성 돌파 전략</b>이란?</p>
-              <p>매일 아침 전날 가격 범위(고가-저가)의 일정 비율을 계산해서 <b>목표가</b>를 정해요.</p>
-              <p>장중에 현재가가 목표가를 돌파하면 → <b style={{ color: '#60a5fa' }}>매수</b></p>
-              <p>오후 3시 10분이 되면 → <b style={{ color: '#f87171' }}>자동 매도</b> (ETF 데이트레이딩)</p>
-              <p style={{ marginTop: 8, color: '#6b7280', fontSize: 12 }}>
-                위 카드의 <b style={{ color: '#facc15' }}>노란선 숫자</b>가 오늘의 목표가예요. 현재가가 그 숫자를 넘으면 매수해요.
+              <p style={{ color: '#facc15', fontWeight: 700, marginBottom: 6 }}>📖 오늘(4/16) 실제 매매로 이해하는 변동성 돌파 전략</p>
+
+              <p style={{ marginBottom: 12 }}>
+                <b style={{ color: '#e2e8f0' }}>① 목표가 계산 공식</b><br/>
+                <span style={{ color: '#9ca3af' }}>
+                  목표가 = 시초가 + (전날 고가 − 전날 저가) × 0.5<br/>
+                  TIGER S&P500 예시: 시초가 25,700 + (25,770 − 25,330) × 0.5 = 목표가 25,925원<br/>
+                  오늘 25,765원에 매수됐다는 건 이 목표가를 시초가 직후 돌파했단 뜻이에요.
+                </span>
+              </p>
+
+              <p style={{ marginBottom: 12 }}>
+                <b style={{ color: '#e2e8f0' }}>② 오늘 4개 ETF 결과가 다른 이유</b><br/>
+                <span style={{ color: '#9ca3af' }}>
+                  KODEX 레버리지(코스피200 2배): <span style={{ color: '#4ade80' }}>+175,000원 (+1.38%)</span><br/>
+                  KODEX 코스닥150 레버리지: <span style={{ color: '#f87171' }}>-161,460원 (-1.60%)</span><br/>
+                  → 코스피와 코스닥은 별개 시장이에요. 오늘 코스피는 강했고 코스닥은 약했어요.<br/>
+                  레버리지 ETF는 기초지수를 2배로 추종하니까, 방향이 갈리면 결과 차이도 2배로 벌어져요.
+                </span>
+              </p>
+
+              <p style={{ marginBottom: 12 }}>
+                <b style={{ color: '#e2e8f0' }}>③ 왜 손실 나는 ETF도 같이 들고 가나요?</b><br/>
+                <span style={{ color: '#9ca3af' }}>
+                  오늘처럼 코스피는 오르고 코스닥은 빠지는 날, 코스닥만 있었다면 -161,460원 손실.<br/>
+                  코스피도 함께 들고 있었기 때문에 +175,000원으로 상쇄돼서 실제 총 손익은 +15,360원.<br/>
+                  분산투자 = 손실을 나눠 갖는 게 아니라, 어느 쪽이 올지 모를 때 리스크를 줄이는 것.
+                </span>
+              </p>
+
+              <p style={{ marginBottom: 12 }}>
+                <b style={{ color: '#e2e8f0' }}>④ 변동성 돌파의 핵심: 확률 게임</b><br/>
+                <span style={{ color: '#9ca3af' }}>
+                  오전에 강하게 치고 오른 날은 오후에도 유지되는 경향(추세 지속성)이 있어요.<br/>
+                  이 경향이 매일 100% 맞지는 않아요. 하지만 장기적으로 승률이 50% 이상이면 돈이 쌓여요.<br/>
+                  오늘 4개 중 2개 수익, 2개 손실이지만 총 +15,360원 → 전략이 작동한 날이에요.
+                </span>
               </p>
 
               <div style={{ marginTop: 16, borderTop: '1px solid #2a2a2a', paddingTop: 14 }}>
@@ -651,25 +712,23 @@ export default function Home() {
                 </p>
                 <p style={{ color: '#9ca3af', marginBottom: 12 }}>
                   목표가 = "이 가격 넘으면 매수!" 신호예요. 천장이 아니에요.<br/>
-                  예) 목표가 91,000원 → 91,200원에 매수 → 오후에 90,500원으로 내려가면 손실.<br/>
-                  레버리지 ETF는 변동성이 커서 오전에 치고 오후에 빠지는 경우가 많아요.
+                  매수 후 가격이 더 오르면 수익, 내려가면 손실 — 목표가는 진입 신호일 뿐이에요.
                 </p>
 
                 <p style={{ color: '#e2e8f0', marginBottom: 4 }}>
-                  <b>Q. 목표 달성(돌파)이 3개인데 왜 손실 종목이 있어요?</b>
+                  <b>Q. 3시 10분에 무조건 팔아야 하나요?</b>
                 </p>
                 <p style={{ color: '#9ca3af', marginBottom: 12 }}>
-                  목표가 돌파 = 매수 시점이에요. 그 이후 가격이 다시 내려가면 손실이에요.<br/>
-                  '목표 달성'은 "오늘 신호가 발동됐다"는 뜻이지, "수익이 났다"는 뜻이 아니에요.<br/>
-                  3시 10분에 강제 청산할 때 현재가가 매수가보다 낮으면 손실이 확정돼요.
+                  레버리지 ETF는 매일 리밸런싱해요. 하룻밤 들고 있으면 복리 손실(변동성 손실)이 생겨요.<br/>
+                  그래서 당일 안에 청산하는 게 원칙이에요. 시스템이 자동으로 3:10분에 팔아줘요.
                 </p>
 
                 <p style={{ color: '#e2e8f0', marginBottom: 4 }}>
                   <b>Q. "내 매매" 탭은 뭔가요?</b>
                 </p>
                 <p style={{ color: '#9ca3af' }}>
-                  엔진이 자동으로 산 것 말고, 내가 직접 수동으로 산 종목들이 표시돼요.<br/>
-                  "오늘의 수업" 추천 종목을 직접 매수했다면 거기서 확인할 수 있어요.
+                  엔진이 자동으로 산 것 외에, 내가 직접 수동으로 매매한 종목이 표시돼요.<br/>
+                  내일부터 직접 매매할 종목들을 여기서 추적할 수 있어요.
                 </p>
               </div>
             </div>
