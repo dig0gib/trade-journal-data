@@ -455,9 +455,9 @@ function TomorrowSignals({ watchlist }) {
   if (!watchlist?.length) return null
   return (
     <div style={styles.section}>
-      <div style={styles.sectionTitle}>📅 내일 예고 — 변동성 돌파 목표가</div>
+      <div style={styles.sectionTitle}>📅 다음 거래일 예고 — 변동성 돌파 목표가</div>
       <div style={{ fontSize: 12, color: '#374151', marginBottom: 10 }}>
-        아래 목표가를 내일 시초가 기준으로 돌파하면 자동 매수 신호 발동 (추정치, 시초가 미확정)
+        아래 목표가를 다음 거래일 시초가 기준으로 돌파하면 자동 매수 신호 발동 (추정치, 시초가 미확정)
       </div>
       <div style={styles.grid}>
         {watchlist.map(item => (
@@ -502,7 +502,8 @@ function CandleChart({ chartData, ma20, height = 220 }) {
       chartRef.current = null
     }
 
-    import('lightweight-charts').then(({ createChart, ColorType }) => {
+    // lightweight-charts v5 API: addSeries(SeriesType, options)
+    import('lightweight-charts').then(({ createChart, ColorType, CandlestickSeries, LineSeries }) => {
       const chart = createChart(containerRef.current, {
         layout: {
           background: { type: ColorType.Solid, color: '#1a1a1a' },
@@ -513,14 +514,14 @@ function CandleChart({ chartData, ma20, height = 220 }) {
           horzLines: { color: '#2a2a2a' },
         },
         rightPriceScale: { borderColor: '#2a2a2a' },
-        timeScale: { borderColor: '#2a2a2a', timeVisible: true },
+        timeScale: { borderColor: '#2a2a2a', timeVisible: false },
         width:  containerRef.current.clientWidth,
         height: height,
       })
       chartRef.current = chart
 
-      // 캔들 시리즈
-      const candleSeries = chart.addCandlestickSeries({
+      // 캔들 시리즈 (v5: addSeries)
+      const candleSeries = chart.addSeries(CandlestickSeries, {
         upColor:   '#4ade80',
         downColor: '#f87171',
         borderUpColor:   '#4ade80',
@@ -542,9 +543,9 @@ function CandleChart({ chartData, ma20, height = 220 }) {
 
       candleSeries.setData(candles)
 
-      // MA20 라인
+      // MA20 라인 (v5: addSeries)
       if (ma20?.length) {
-        const maSeries = chart.addLineSeries({
+        const maSeries = chart.addSeries(LineSeries, {
           color:     '#facc15',
           lineWidth: 1,
           priceLineVisible: false,
