@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-04-20 07:33:52",
+  "updated_at": "2026-04-20 07:38:52",
   "cash": 98389941,
   "vix": 17.469999313354492,
   "vix_status": "정상",
   "market": {
     "sp500_chg": 1.2040463669150832,
-    "nq_chg": null
+    "nq_chg": -0.04223171132279105
   },
   "regime": "unknown",
   "watchlist": [
