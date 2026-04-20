@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-04-20 18:01:00",
-  "cash": 53392964,
+  "updated_at": "2026-04-20 18:04:09",
+  "cash": 50077709,
   "vix": 17.469999313354492,
   "vix_status": "정상",
   "market": {
@@ -14,7 +14,7 @@
       "name": "KODEX 레버리지",
       "price": 102900,
       "target": 103111,
-      "prev_close": 102285,
+      "prev_close": 101915,
       "pct_to_target": -0.2,
       "holding": false,
       "triggered": false
@@ -24,7 +24,7 @@
       "name": "KODEX 코스닥150 레버리지",
       "price": 16345,
       "target": 16283,
-      "prev_close": 16025,
+      "prev_close": 16095,
       "pct_to_target": 0.38,
       "holding": false,
       "triggered": true
@@ -33,8 +33,8 @@
       "code": "360750",
       "name": "TIGER 미국S&P500",
       "price": 25995,
-      "target": 25992,
-      "prev_close": 25885,
+      "target": 25993,
+      "prev_close": 25940,
       "pct_to_target": 0.01,
       "holding": false,
       "triggered": true
@@ -44,7 +44,7 @@
       "name": "TIGER 미국나스닥100",
       "price": 173580,
       "target": 173286,
-      "prev_close": 172955,
+      "prev_close": 172915,
       "pct_to_target": 0.17,
       "holding": false,
       "triggered": true
@@ -56,91 +56,91 @@
   "today_trades": [
     {
       "type": "BUY",
-      "dt": "2026-04-20 09:34:22",
+      "dt": "2026-04-20 09:34:11",
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 16295,
-      "qty": 1164,
-      "amount": 18967380,
+      "price": 16290,
+      "qty": 1207,
+      "amount": 19662030,
       "bucket": "day",
       "target": 16283,
       "vix": 17.469999313354492,
       "regime": "unknown",
       "us": {
         "sp500_chg": 1.2040463669150832,
-        "nq_chg": 0.018769649476796022
+        "nq_chg": -0.06100136079958706
       }
     },
     {
       "type": "BUY",
-      "dt": "2026-04-20 09:50:00",
+      "dt": "2026-04-20 09:50:22",
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 173290,
-      "qty": 61,
-      "amount": 10570690,
+      "price": 173300,
+      "qty": 83,
+      "amount": 14383900,
       "bucket": "day",
       "target": 173286,
       "vix": 17.469999313354492,
       "regime": "unknown",
       "us": {
         "sp500_chg": 1.2040463669150832,
-        "nq_chg": 0.07132466801182488
+        "nq_chg": 0.08070949275022289
       }
     },
     {
       "type": "BUY",
-      "dt": "2026-04-20 09:56:21",
+      "dt": "2026-04-20 09:56:41",
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 103140,
-      "qty": 76,
-      "amount": 7838640,
+      "price": 103125,
+      "qty": 48,
+      "amount": 4950000,
       "bucket": "day",
       "target": 103111,
       "vix": 17.469999313354492,
       "regime": "unknown",
       "us": {
         "sp500_chg": 1.2040463669150832,
-        "nq_chg": 0.05067805358734926
+        "nq_chg": 0.041293228848951244
       }
     },
     {
       "type": "SELL",
-      "dt": "2026-04-20 15:10:24",
+      "dt": "2026-04-20 15:10:09",
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 102905,
-      "qty": 76,
-      "pnl": -17860,
-      "pnl_pct": -0.23,
+      "price": 102895,
+      "qty": 48,
+      "pnl": -11040,
+      "pnl_pct": -0.22,
       "reason": "강제청산",
       "vix": 17.469999313354492
     },
     {
       "type": "SELL",
-      "dt": "2026-04-20 15:10:27",
+      "dt": "2026-04-20 15:10:12",
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 173410,
-      "qty": 61,
-      "pnl": 7320,
-      "pnl_pct": 0.07,
+      "price": 173385,
+      "qty": 83,
+      "pnl": 7055,
+      "pnl_pct": 0.05,
       "reason": "강제청산",
       "vix": 17.469999313354492
     },
     {
       "type": "SELL",
-      "dt": "2026-04-20 15:11:27",
+      "dt": "2026-04-20 15:10:25",
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 16345,
-      "qty": 1164,
-      "pnl": 58200,
-      "pnl_pct": 0.31,
+      "price": 16360,
+      "qty": 1207,
+      "pnl": 84490,
+      "pnl_pct": 0.43,
       "reason": "강제청산",
       "vix": 17.469999313354492
     }
   ],
-  "today_pnl": 47660
+  "today_pnl": 80505
 }
