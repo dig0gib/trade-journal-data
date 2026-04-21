@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-04-21 18:57:57",
+  "updated_at": "2026-04-21 21:36:56",
   "cash": 51693425,
-  "vix": 19.059999465942383,
+  "vix": 18.920000076293945,
   "vix_status": "정상",
   "market": {
     "sp500_chg": -0.23743726176704383,
-    "nq_chg": 0.0466130926854735
+    "nq_chg": 0.1118714224451364
   },
   "regime": "bull",
   "watchlist": [
@@ -32,10 +32,10 @@
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 0,
+      "price": 26010,
       "target": 26059,
       "prev_close": 26010,
-      "pct_to_target": -100.0,
+      "pct_to_target": -0.19,
       "holding": false,
       "triggered": false
     },
