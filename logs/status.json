@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-04-21 10:35:54",
-  "cash": 33156255,
+  "updated_at": "2026-04-21 10:40:54",
+  "cash": 26515125,
   "vix": 18.8799991607666,
   "vix_status": "정상",
   "market": {
@@ -12,10 +12,10 @@
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 107145,
+      "price": 106630,
       "target": 104738,
       "prev_close": 106900,
-      "pct_to_target": 2.3,
+      "pct_to_target": 1.81,
       "holding": true,
       "triggered": true
     },
@@ -32,20 +32,20 @@
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 26045,
+      "price": 26050,
       "target": 26059,
       "prev_close": 26030,
-      "pct_to_target": -0.05,
-      "holding": false,
+      "pct_to_target": -0.03,
+      "holding": true,
       "triggered": false
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 174002,
+      "price": 174015,
       "target": 174030,
       "prev_close": 173905,
-      "pct_to_target": -0.02,
+      "pct_to_target": -0.01,
       "holding": true,
       "triggered": false
     }
@@ -54,16 +54,23 @@
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 107145,
+      "price": 106630,
       "avg_price": 0,
       "qty": 97
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 174002,
+      "price": 174015,
       "avg_price": 0,
       "qty": 47
+    },
+    {
+      "code": "360750",
+      "name": "TIGER 미국S&P500",
+      "price": 26050,
+      "avg_price": 0,
+      "qty": 254
     }
   ],
   "bucket_b_positions": [],
@@ -111,6 +118,28 @@
         "nq_chg": 0.42917650586603695
       },
       "hour": 9,
+      "dow": 1
+    },
+    {
+      "type": "BUY",
+      "dt": "2026-04-21 10:37:29",
+      "code": "360750",
+      "name": "TIGER 미국S&P500",
+      "price": 26060,
+      "qty": 254,
+      "amount": 6619240,
+      "bucket": "day",
+      "target": 26059,
+      "entry_vs_target_pct": 0.004,
+      "prev_close": 26030,
+      "vix": 18.8799991607666,
+      "vix_level": "medium",
+      "regime": "bull",
+      "us": {
+        "sp500_chg": -0.23743726176704383,
+        "nq_chg": 0.5350650324225046
+      },
+      "hour": 10,
       "dow": 1
     }
   ],
