@@ -40,3 +40,4 @@
 {"type": "SELL", "dt": "2026-04-20 15:10:25", "code": "233740", "name": "KODEX 코스닥150 레버리지", "price": 16360, "qty": 1207, "pnl": 84490, "pnl_pct": 0.43, "reason": "강제청산", "vix": 17.469999313354492}
 {"type": "SELL", "dt": "2026-04-20 15:10:27", "code": "133690", "name": "TIGER 미국나스닥100", "price": 173410, "qty": 61, "pnl": 7320, "pnl_pct": 0.07, "reason": "강제청산", "vix": 17.469999313354492}
 {"type": "SELL", "dt": "2026-04-20 15:11:27", "code": "233740", "name": "KODEX 코스닥150 레버리지", "price": 16345, "qty": 1164, "pnl": 58200, "pnl_pct": 0.31, "reason": "강제청산", "vix": 17.469999313354492}
+{"type": "BUY", "dt": "2026-04-21 09:30:08", "code": "122630", "name": "KODEX 레버리지", "price": 106660, "qty": 97, "amount": 10346020, "bucket": "day", "target": 104738, "entry_vs_target_pct": 1.835, "prev_close": 106900, "vix": 18.8799991607666, "vix_level": "medium", "regime": "bull", "us": {"sp500_chg": -0.23743726176704383, "nq_chg": 0.5200719667153941}, "hour": 9, "dow": 1}
