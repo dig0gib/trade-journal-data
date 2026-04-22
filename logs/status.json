@@ -1,137 +1,58 @@
 {
-  "updated_at": "2026-04-22 18:36:20",
-  "cash": 51637670,
-  "vix": 19.049999237060547,
+  "updated_at": "2026-04-22 23:19:43",
+  "cash": 51573175,
+  "vix": 19.1299991607666,
   "vix_status": "정상",
   "market": {
-    "sp500_chg": -0.634821795967298,
-    "nq_chg": 0.12214338327847758
+    "sp500_chg": 0.8820777527370394,
+    "nq_chg": 0.28065006386886837
   },
   "regime": "bull",
   "watchlist": [
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 108810,
+      "price": 0,
       "target": 109876,
-      "prev_close": 107480,
-      "pct_to_target": -0.97,
+      "prev_close": 108810,
+      "pct_to_target": -100.0,
       "holding": false,
       "triggered": false
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 16605,
-      "target": 16827,
-      "prev_close": 16340,
-      "pct_to_target": -1.32,
+      "price": 0,
+      "target": 16830,
+      "prev_close": 16605,
+      "pct_to_target": -100.0,
       "holding": false,
       "triggered": false
     },
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 26045,
+      "price": 0,
       "target": 26053,
-      "prev_close": 26055,
-      "pct_to_target": -0.03,
+      "prev_close": 26045,
+      "pct_to_target": -100.0,
       "holding": false,
       "triggered": false
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 174520,
+      "price": 0,
       "target": 174140,
-      "prev_close": 174540,
-      "pct_to_target": 0.22,
+      "prev_close": 174520,
+      "pct_to_target": -100.0,
       "holding": false,
-      "triggered": true
+      "triggered": false
     }
   ],
   "positions": [],
   "bucket_b_positions": [],
   "user_positions": [],
-  "today_trades": [
-    {
-      "type": "BUY",
-      "dt": "2026-04-22 09:30:06",
-      "code": "133690",
-      "name": "TIGER 미국나스닥100",
-      "price": 174515,
-      "qty": 59,
-      "amount": 10296385,
-      "bucket": "day",
-      "target": 174140,
-      "entry_vs_target_pct": 0.215,
-      "prev_close": 174540,
-      "vix": 19.489999771118164,
-      "vix_level": "medium",
-      "regime": "bull",
-      "us": {
-        "sp500_chg": -0.634821795967298,
-        "nq_chg": -0.06432606790595342
-      },
-      "hour": 9,
-      "dow": 2
-    },
-    {
-      "type": "BUY",
-      "dt": "2026-04-22 09:30:17",
-      "code": "360750",
-      "name": "TIGER 미국S&P500",
-      "price": 26055,
-      "qty": 317,
-      "amount": 8259435,
-      "bucket": "day",
-      "target": 26053,
-      "entry_vs_target_pct": 0.008,
-      "prev_close": 26055,
-      "vix": 19.489999771118164,
-      "vix_level": "medium",
-      "regime": "bull",
-      "us": {
-        "sp500_chg": -0.634821795967298,
-        "nq_chg": -0.06432606790595342
-      },
-      "hour": 9,
-      "dow": 2
-    },
-    {
-      "type": "SELL",
-      "dt": "2026-04-22 15:10:19",
-      "code": "133690",
-      "name": "TIGER 미국나스닥100",
-      "price": 174570,
-      "qty": 59,
-      "pnl": 3245,
-      "pnl_pct": 0.03,
-      "reason": "강제청산",
-      "vix": 19.489999771118164,
-      "vix_level": "medium",
-      "regime": "bull",
-      "hour": 15,
-      "dow": 2,
-      "hold_min": 340.2
-    },
-    {
-      "type": "SELL",
-      "dt": "2026-04-22 15:10:39",
-      "code": "360750",
-      "name": "TIGER 미국S&P500",
-      "price": 26070,
-      "qty": 317,
-      "pnl": 4755,
-      "pnl_pct": 0.06,
-      "reason": "강제청산",
-      "vix": 19.489999771118164,
-      "vix_level": "medium",
-      "regime": "bull",
-      "hour": 15,
-      "dow": 2,
-      "hold_min": 340.4
-    }
-  ],
-  "today_pnl": 8000
+  "today_trades": [],
+  "today_pnl": 0
 }
