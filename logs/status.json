@@ -1,31 +1,31 @@
 {
-  "updated_at": "2026-04-23 11:51:21",
+  "updated_at": "2026-04-23 11:56:20",
   "cash": 26327060,
   "vix": 18.90999984741211,
   "vix_status": "정상",
   "market": {
     "sp500_chg": 1.0460084168953927,
-    "nq_chg": 0.5678268734091058
+    "nq_chg": 0.5379903217685617
   },
   "regime": "bull",
   "watchlist": [
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 109550,
+      "price": 109450,
       "target": 110624,
       "prev_close": 112660,
-      "pct_to_target": -0.97,
+      "pct_to_target": -1.06,
       "holding": true,
       "triggered": false
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 16325,
+      "price": 16340,
       "target": 17002,
       "prev_close": 16460,
-      "pct_to_target": -3.98,
+      "pct_to_target": -3.89,
       "holding": false,
       "triggered": false
     },
@@ -42,10 +42,10 @@
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 176215,
+      "price": 176230,
       "target": 174933,
       "prev_close": 176200,
-      "pct_to_target": 0.73,
+      "pct_to_target": 0.74,
       "holding": true,
       "triggered": true
     }
@@ -54,7 +54,7 @@
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 176215,
+      "price": 176230,
       "avg_price": 0,
       "qty": 58
     },
@@ -68,7 +68,7 @@
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 109550,
+      "price": 109450,
       "avg_price": 0,
       "qty": 58
     }
