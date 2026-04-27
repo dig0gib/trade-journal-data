@@ -97,8 +97,13 @@ function StatusBar({ status, totalPnl }) {
           </b>
         </span>
         <span style={styles.headerBadge}>
-          미국장: <b style={{ color: market?.status === '위험' ? '#f87171' : '#9ca3af' }}>
-            {market?.status || '—'}
+          S&P: <b style={{ color: market?.sp500_chg < 0 ? '#f87171' : '#4ade80' }}>
+            {market?.sp500_chg != null ? `${market.sp500_chg >= 0 ? '+' : ''}${market.sp500_chg.toFixed(2)}%` : '—'}
+          </b>
+        </span>
+        <span style={styles.headerBadge}>
+          NQ: <b style={{ color: market?.nq_chg < 0 ? '#f87171' : '#4ade80' }}>
+            {market?.nq_chg != null ? `${market.nq_chg >= 0 ? '+' : ''}${market.nq_chg.toFixed(2)}%` : '—'}
           </b>
         </span>
       </div>
@@ -502,8 +507,12 @@ function CandleChart({ chartData, ma20, height = 220 }) {
       chartRef.current = null
     }
 
+    // Promise 외부에 선언해야 cleanup 함수에서 접근 가능
+    let ro = null
+
     // lightweight-charts v5 API: addSeries(SeriesType, options)
     import('lightweight-charts').then(({ createChart, ColorType, CandlestickSeries, LineSeries }) => {
+      if (!containerRef.current) return
       const chart = createChart(containerRef.current, {
         layout: {
           background: { type: ColorType.Solid, color: '#1a1a1a' },
@@ -558,17 +567,17 @@ function CandleChart({ chartData, ma20, height = 220 }) {
 
       chart.timeScale().fitContent()
 
-      // 리사이즈 대응
-      const ro = new ResizeObserver(() => {
+      // 리사이즈 대응 — ro를 외부 변수에 할당해야 React cleanup에서 해제 가능
+      ro = new ResizeObserver(() => {
         if (containerRef.current) {
           chart.applyOptions({ width: containerRef.current.clientWidth })
         }
       })
       ro.observe(containerRef.current)
-      return () => ro.disconnect()
     })
 
     return () => {
+      if (ro) ro.disconnect()
       if (chartRef.current) {
         chartRef.current.remove()
         chartRef.current = null
@@ -754,6 +763,13 @@ export default function Home() {
     fetchLesson().then(setLesson)
   }, [tab])
 
+  const handleSelect = useCallback(async (file) => {
+    setSelected(file.name)
+    setContent('로딩중...')
+    const text = await fetchJournalContent(file.download_url)
+    setContent(text)
+  }, [])
+
   // 일지 목록
   useEffect(() => {
     if (tab !== 'journal') return
@@ -762,14 +778,9 @@ export default function Home() {
       setLoadingJ(false)
       if (list.length > 0 && !selected) handleSelect(list[0])
     })
-  }, [tab])
-
-  async function handleSelect(file) {
-    setSelected(file.name)
-    setContent('로딩중...')
-    const text = await fetchJournalContent(file.download_url)
-    setContent(text)
-  }
+    // selected는 의도적으로 제외 — tab 전환 시 최초 1회만 자동 선택
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, handleSelect])
 
   return (
     <div style={{ background: '#111', minHeight: '100vh', color: '#e2e8f0', fontFamily: "'Pretendard', 'Apple SD Gothic Neo', sans-serif" }}>
@@ -851,7 +862,7 @@ export default function Home() {
           <div style={styles.section}>
             <div style={styles.sectionTitle}>전략 이해하기 — 오늘 매매로 배우는 변동성 돌파</div>
             <div style={styles.guideBox}>
-              <p style={{ color: '#facc15', fontWeight: 700, marginBottom: 6 }}>📖 오늘(4/16) 실제 매매로 이해하는 변동성 돌파 전략</p>
+              <p style={{ color: '#facc15', fontWeight: 700, marginBottom: 6 }}>📖 실제 매매로 이해하는 변동성 돌파 전략</p>
 
               <p style={{ marginBottom: 12 }}>
                 <b style={{ color: '#e2e8f0' }}>① 목표가 계산 공식</b><br/>
