@@ -1,33 +1,33 @@
 {
-  "updated_at": "2026-04-27 09:41:02",
-  "cash": 63567870,
+  "updated_at": "2026-04-27 09:46:03",
+  "cash": 50818130,
   "vix": 18.690000534057617,
   "vix_status": "정상",
   "market": {
     "sp500_chg": 0.7973689797975725,
-    "nq_chg": 0.2202341244094344
+    "nq_chg": 0.2229756280327884
   },
   "regime": "bull",
   "watchlist": [
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 113980,
+      "price": 114085,
       "target": 112780,
       "prev_close": 113520,
-      "pct_to_target": 1.06,
+      "pct_to_target": 1.16,
       "holding": true,
       "triggered": true
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 17870,
+      "price": 17977,
       "target": 17907,
       "prev_close": 17635,
-      "pct_to_target": -0.21,
-      "holding": false,
-      "triggered": false
+      "pct_to_target": 0.39,
+      "holding": true,
+      "triggered": true
     },
     {
       "code": "360750",
@@ -42,10 +42,10 @@
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 178675,
+      "price": 178695,
       "target": 177616,
       "prev_close": 178580,
-      "pct_to_target": 0.6,
+      "pct_to_target": 0.61,
       "holding": true,
       "triggered": true
     }
@@ -54,16 +54,23 @@
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 178675,
+      "price": 178695,
       "avg_price": 0,
       "qty": 110
     },
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 113980,
+      "price": 114085,
       "avg_price": 0,
       "qty": 139
+    },
+    {
+      "code": "233740",
+      "name": "KODEX 코스닥150 레버리지",
+      "price": 17977,
+      "avg_price": 0,
+      "qty": 709
     }
   ],
   "bucket_b_positions": [],
@@ -109,6 +116,28 @@
       "us": {
         "sp500_chg": 0.7973689797975725,
         "nq_chg": 0.15626570653117544
+      },
+      "hour": 9,
+      "dow": 0
+    },
+    {
+      "type": "BUY",
+      "dt": "2026-04-27 09:42:30",
+      "code": "233740",
+      "name": "KODEX 코스닥150 레버리지",
+      "price": 17920,
+      "qty": 709,
+      "amount": 12705280,
+      "bucket": "day",
+      "target": 17907,
+      "entry_vs_target_pct": 0.073,
+      "prev_close": 17635,
+      "vix": 18.690000534057617,
+      "vix_level": "medium",
+      "regime": "bull",
+      "us": {
+        "sp500_chg": 0.7973689797975725,
+        "nq_chg": 0.2229756280327884
       },
       "hour": 9,
       "dow": 0
