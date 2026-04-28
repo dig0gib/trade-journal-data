@@ -1,58 +1,89 @@
 {
-  "updated_at": "2026-04-28 09:26:00",
-  "cash": 98798305,
+  "updated_at": "2026-04-28 09:31:01",
+  "cash": 78979038,
   "vix": 18.030000686645508,
   "vix_status": "정상",
   "market": {
     "sp500_chg": 0.12323767534654974,
-    "nq_chg": -0.05631346618467183
+    "nq_chg": -0.14986648258823956
   },
   "regime": "bull",
   "watchlist": [
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 116960,
+      "price": 116585,
       "target": 118084,
       "prev_close": 116435,
-      "pct_to_target": -0.95,
+      "pct_to_target": -1.27,
       "holding": false,
       "triggered": false
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 17450,
+      "price": 17300,
       "target": 18339,
       "prev_close": 17430,
-      "pct_to_target": -4.85,
+      "pct_to_target": -5.67,
       "holding": false,
       "triggered": false
     },
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 26340,
+      "price": 26335,
       "target": 26308,
       "prev_close": 26345,
-      "pct_to_target": 0.12,
-      "holding": false,
+      "pct_to_target": 0.1,
+      "holding": true,
       "triggered": true
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 178580,
+      "price": 178525,
       "target": 178799,
       "prev_close": 178645,
-      "pct_to_target": -0.12,
+      "pct_to_target": -0.15,
       "holding": false,
       "triggered": false
     }
   ],
-  "positions": [],
+  "positions": [
+    {
+      "code": "360750",
+      "name": "TIGER 미국S&P500",
+      "price": 26335,
+      "avg_price": 26335,
+      "qty": 750
+    }
+  ],
   "bucket_b_positions": [],
   "user_positions": [],
-  "today_trades": [],
+  "today_trades": [
+    {
+      "type": "BUY",
+      "dt": "2026-04-28 09:30:12",
+      "code": "360750",
+      "name": "TIGER 미국S&P500",
+      "price": 26335,
+      "qty": 750,
+      "amount": 19751250,
+      "bucket": "day",
+      "target": 26308,
+      "entry_vs_target_pct": 0.103,
+      "prev_close": 26345,
+      "vix": 18.030000686645508,
+      "vix_level": "medium",
+      "regime": "bull",
+      "us": {
+        "sp500_chg": 0.12323767534654974,
+        "nq_chg": -0.05631346618467183
+      },
+      "hour": 9,
+      "dow": 1
+    }
+  ],
   "today_pnl": 0
 }
