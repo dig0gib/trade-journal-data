@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-04-29 15:06:18",
-  "cash": 52957788,
+  "updated_at": "2026-04-29 15:11:20",
+  "cash": 68529828,
   "vix": 17.829999923706055,
   "vix_status": "정상",
   "market": {
@@ -12,53 +12,45 @@
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 118205,
+      "price": 118010,
       "target": 118382,
       "prev_close": 115635,
-      "pct_to_target": -0.15,
-      "holding": true,
+      "pct_to_target": -0.31,
+      "holding": false,
       "triggered": false
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 17590,
+      "price": 17560,
       "target": 17857,
       "prev_close": 17580,
-      "pct_to_target": -1.5,
+      "pct_to_target": -1.66,
       "holding": false,
       "triggered": false
     },
     {
       "code": "360750",
       "name": "TIGER 미국S&P500",
-      "price": 26205,
+      "price": 26225,
       "target": 26266,
       "prev_close": 26115,
-      "pct_to_target": -0.23,
+      "pct_to_target": -0.16,
       "holding": false,
       "triggered": false
     },
     {
       "code": "133690",
       "name": "TIGER 미국나스닥100",
-      "price": 177775,
+      "price": 177860,
       "target": 178340,
       "prev_close": 176930,
-      "pct_to_target": -0.32,
+      "pct_to_target": -0.27,
       "holding": false,
       "triggered": false
     }
   ],
-  "positions": [
-    {
-      "code": "122630",
-      "name": "KODEX 레버리지",
-      "price": 118205,
-      "avg_price": 118395,
-      "qty": 132
-    }
-  ],
+  "positions": [],
   "bucket_b_positions": [],
   "user_positions": [],
   "today_trades": [
@@ -83,7 +75,24 @@
       },
       "hour": 13,
       "dow": 2
+    },
+    {
+      "type": "SELL",
+      "dt": "2026-04-29 15:10:10",
+      "code": "122630",
+      "name": "KODEX 레버리지",
+      "price": 117970,
+      "qty": 132,
+      "pnl": -56100,
+      "pnl_pct": -0.36,
+      "reason": "강제청산(fallback)",
+      "vix": 17.829999923706055,
+      "vix_level": "medium",
+      "regime": "bull",
+      "hour": 15,
+      "dow": 2,
+      "hold_min": 98.6
     }
   ],
-  "today_pnl": 0
+  "today_pnl": -56100
 }
