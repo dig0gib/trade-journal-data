@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-30 12:46:08",
+  "updated_at": "2026-04-30 12:51:08",
   "cash": 43888368,
   "vix": 18.780000686645508,
   "vix_status": "정상",
@@ -12,20 +12,20 @@
     {
       "code": "122630",
       "name": "KODEX 레버리지",
-      "price": 117585,
+      "price": 117930,
       "target": 120357,
       "prev_close": 119485,
-      "pct_to_target": -2.3,
+      "pct_to_target": -2.02,
       "holding": false,
       "triggered": false
     },
     {
       "code": "233740",
       "name": "KODEX 코스닥150 레버리지",
-      "price": 16965,
+      "price": 16985,
       "target": 17994,
       "prev_close": 17395,
-      "pct_to_target": -5.72,
+      "pct_to_target": -5.61,
       "holding": false,
       "triggered": false
     },
